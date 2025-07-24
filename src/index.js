@@ -1,5 +1,3 @@
-function hello() {
-  console.log("hello ppl");
-}
+const hello = require("./modules/hello-module");
 
 hello();
