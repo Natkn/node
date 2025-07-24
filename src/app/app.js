@@ -1,46 +1,43 @@
-const http = require("http");
+const express = require("express");
 const fs = require("fs");
 const url = require("url");
+const app = express(); // Создаем экземпляр Express
+const port = 3003;
+const hostname = "127.0.0.1";
 
-const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url, true); // Разбираем URL
-  const query = parsedUrl.query; // Получаем параметры запроса
+// Middleware для обработки JSON-данных
+app.use(express.json());
 
-  if (parsedUrl.pathname !== "/") {
-    res.writeHead(500, { "Content-Type": "text/plain" });
-    res.end();
-    return; //  Если путь не "/", возвращаем ошибку 500
-  }
+// Middleware для обработки данных из форм
+app.use(express.urlencoded({ extended: true }));
+
+// Обработчик для GET-запросов
+app.get("/", (req, res) => {
+  const parsedUrl = url.parse(req.url, true);
+  const query = parsedUrl.query;
 
   if (query.hello) {
     const name = query.hello;
     if (name) {
-      res.writeHead(200, { "Content-Type": "text/plain" });
-      res.end(`Hello, ${name}!`);
+      res.status(200).send(`Hello, ${name}!`);
     } else {
-      res.writeHead(400, { "Content-Type": "text/plain" });
-      res.end("Enter a name");
+      res.status(400).send("Enter a name");
     }
   } else if (query.users) {
     fs.readFile("data/users.json", (err, data) => {
       if (err) {
         console.error(err);
-        res.writeHead(500, { "Content-Type": "text/plain" });
-        res.end("Internal Server Error");
+        res.status(500).send("Internal Server Error");
         return;
       }
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(data);
+      res.status(200).json(JSON.parse(data));
     });
   } else {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Hello, World!");
+    res.status(200).send("Hello, World!");
   }
 });
 
-const port = 3003;
-const hostname = "127.0.0.1";
-
-server.listen(port, hostname, () => {
+// Запускаем сервер
+app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
