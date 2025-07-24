@@ -1,0 +1,17 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "server",
+  "main": "src/app/app.js",
+  "scripts": {
+    "start": "node src/app/app.js",
+    "dev": "nodemon src/app/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
